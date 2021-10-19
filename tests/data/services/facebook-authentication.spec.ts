@@ -1,24 +1,11 @@
 import { AuthenticationError } from '@/domain/errors'
-import { LoadFacebookUserApi } from '@/data/contracts/apis'
 import { FacebookAuthenticationService } from '@/data/services'
-
-class LoadFacebookUserApiSpy implements LoadFacebookUserApi {
-  token?: string
-  result = undefined
-  callsCount: number = 0
-
-  async loadUser (params: LoadFacebookUserApi.Params): Promise<LoadFacebookUserApi.Result> {
-    this.token = params.token
-
-    this.callsCount++
-
-    return this.result
-  }
-}
 
 describe('FacebookAuthenticationService', () => {
   it('should call LoadFacebookApi with correct params', async () => {
-    const loadFacebookUserApiSpy = new LoadFacebookUserApiSpy()
+    const loadFacebookUserApiSpy = {
+      loadUser: jest.fn()
+    }
 
     const sut = new FacebookAuthenticationService(loadFacebookUserApiSpy)
 
@@ -26,14 +13,16 @@ describe('FacebookAuthenticationService', () => {
       token: 'any_token'
     })
 
-    expect(loadFacebookUserApiSpy.token).toEqual('any_token')
-    expect(loadFacebookUserApiSpy.callsCount).toBe(1)
+    expect(loadFacebookUserApiSpy.loadUser).toHaveBeenCalledWith({ token: 'any_token' })
+    expect(loadFacebookUserApiSpy.loadUser).toHaveBeenCalledTimes(1)
   })
 
   it('should return AuthenticationError when LoadFacebookApiUserApi returns undefined', async () => {
-    const loadFacebookUserApiSpy = new LoadFacebookUserApiSpy()
+    const loadFacebookUserApiSpy = {
+      loadUser: jest.fn()
+    }
 
-    loadFacebookUserApiSpy.result = undefined
+    loadFacebookUserApiSpy.loadUser.mockResolvedValueOnce(undefined)
 
     const sut = new FacebookAuthenticationService(loadFacebookUserApiSpy)
 
