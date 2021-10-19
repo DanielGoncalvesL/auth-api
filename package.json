@@ -1,0 +1,8 @@
+{
+  "name": "auth-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/DanielGoncalvesL/auth-api.git",
+  "author": "Daniel Gonçalves <danielopesgl05@gmail.com>",
+  "license": "MIT"
+}
