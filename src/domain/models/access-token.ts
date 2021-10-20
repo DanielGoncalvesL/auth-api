@@ -1,4 +1,3 @@
-
 export type AccessToken = {
-  accessToken: string
-}
+  accessToken: string;
+};

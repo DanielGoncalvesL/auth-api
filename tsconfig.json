@@ -9,6 +9,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "baseUrl": "src",
+    "allowJs": true,
     "paths": {
       "@/*": ["*"],
       "@/tests/*": ["../tests/*"]
