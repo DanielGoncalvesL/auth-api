@@ -6,6 +6,7 @@ import { LoadFacebookUserApi } from '../../../src/data/contracts/apis/facebook'
 describe('FacebookAuthenticationService', () => {
   let sut: FacebookAuthenticationService
   let loadFacebookUserApiSpy: MockProxy<LoadFacebookUserApi>
+  const token = 'any_token'
 
   beforeEach(() => {
     loadFacebookUserApiSpy = mock<LoadFacebookUserApi>()
@@ -15,10 +16,10 @@ describe('FacebookAuthenticationService', () => {
 
   it('should call LoadFacebookApi with correct params', async () => {
     await sut.perform({
-      token: 'any_token'
+      token
     })
 
-    expect(loadFacebookUserApiSpy.loadUser).toHaveBeenCalledWith({ token: 'any_token' })
+    expect(loadFacebookUserApiSpy.loadUser).toHaveBeenCalledWith({ token })
     expect(loadFacebookUserApiSpy.loadUser).toHaveBeenCalledTimes(1)
   })
 
@@ -26,7 +27,7 @@ describe('FacebookAuthenticationService', () => {
     loadFacebookUserApiSpy.loadUser.mockResolvedValueOnce(undefined)
 
     const authResult = await sut.perform({
-      token: 'any_token'
+      token
     })
 
     expect(authResult).toEqual(new AuthenticationError())
