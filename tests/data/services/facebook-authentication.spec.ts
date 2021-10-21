@@ -5,13 +5,16 @@ import { LoadFacebookUserApi } from '../../../src/data/contracts/apis/facebook';
 import {
   CreateFacebookUserAccountRepository,
   LoadUserAccountRepository,
+  UpdateFacebookUserAccountRepository,
 } from '@/data/contracts/repositories';
 
 describe('FacebookAuthenticationService', () => {
   let sut: FacebookAuthenticationService;
   let facebookApi: MockProxy<LoadFacebookUserApi>;
   let userAccountRepository: MockProxy<
-    LoadUserAccountRepository & CreateFacebookUserAccountRepository
+    LoadUserAccountRepository &
+      CreateFacebookUserAccountRepository &
+      UpdateFacebookUserAccountRepository
   >;
   const token = 'any_token';
 
@@ -59,7 +62,7 @@ describe('FacebookAuthenticationService', () => {
     expect(userAccountRepository.load).toHaveBeenCalledTimes(1);
   });
 
-  it('should call CreateUserAccountRepository when LoadUserAccountRepository returns undefined', async () => {
+  it('should call CreateFacebookUserAccountRepository when LoadUserAccountRepository returns undefined', async () => {
     userAccountRepository.load.mockResolvedValueOnce(undefined);
 
     await sut.perform({
@@ -73,5 +76,24 @@ describe('FacebookAuthenticationService', () => {
     });
 
     expect(userAccountRepository.createFromFacebook).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call UpdateFacebookUserAccountRepository when LoadUserAccountRepository returns data', async () => {
+    userAccountRepository.load.mockResolvedValueOnce({
+      id: 'any_id',
+      name: 'any_name',
+    });
+
+    await sut.perform({
+      token,
+    });
+
+    expect(userAccountRepository.updateWithFacebook).toHaveBeenCalledWith({
+      id: 'any_id',
+      name: 'any_name',
+      facebookId: 'any_id',
+    });
+
+    expect(userAccountRepository.updateWithFacebook).toHaveBeenCalledTimes(1);
   });
 });
