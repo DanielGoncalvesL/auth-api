@@ -27,10 +27,10 @@ export class FacebookAuthenticationService {
         email: facebookData.email,
       });
 
-      if (userAccountData?.name !== undefined) {
+      if (userAccountData !== undefined) {
         await this.userAccountRepository.updateWithFacebook({
           id: userAccountData.id,
-          name: userAccountData.name,
+          name: userAccountData.name ?? facebookData.name,
           facebookId: facebookData.facebookId,
         });
       } else {
