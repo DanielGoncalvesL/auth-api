@@ -6,6 +6,10 @@ import {
   SaveFacebookUserAccountRepository,
   LoadUserAccountRepository,
 } from '@/data/contracts/repositories';
+import { mocked } from 'ts-jest/utils';
+import { FacebookAccount } from '../../../src/domain/models/facebook-account';
+
+jest.mock('@/domain/models/facebook-account');
 
 describe('FacebookAuthenticationService', () => {
   let sut: FacebookAuthenticationService;
@@ -61,54 +65,19 @@ describe('FacebookAuthenticationService', () => {
     expect(userAccountRepository.load).toHaveBeenCalledTimes(1);
   });
 
-  it('should create account with facebook data', async () => {
-    await sut.perform({
-      token,
-    });
+  it('should call SaveFacebookAccountRepository with FacebookAccount', async () => {
+    const FacebookAccountStub = jest.fn().mockImplementation(() => ({
+      any: 'any',
+    }));
 
-    expect(userAccountRepository.saveWithFacebook).toHaveBeenCalledWith({
-      email: 'any_email',
-      name: 'any_fb_name',
-      facebookId: 'any_id',
-    });
-
-    expect(userAccountRepository.saveWithFacebook).toHaveBeenCalledTimes(1);
-  });
-
-  it('should not update account name', async () => {
-    userAccountRepository.load.mockResolvedValueOnce({
-      id: 'any_id',
-      name: 'any_name',
-    });
+    mocked(FacebookAccount).mockImplementation(FacebookAccountStub);
 
     await sut.perform({
       token,
     });
 
     expect(userAccountRepository.saveWithFacebook).toHaveBeenCalledWith({
-      id: 'any_id',
-      name: 'any_name',
-      email: 'any_email',
-      facebookId: 'any_id',
-    });
-
-    expect(userAccountRepository.saveWithFacebook).toHaveBeenCalledTimes(1);
-  });
-
-  it('should update account name ', async () => {
-    userAccountRepository.load.mockResolvedValueOnce({
-      id: 'any_id',
-    });
-
-    await sut.perform({
-      token,
-    });
-
-    expect(userAccountRepository.saveWithFacebook).toHaveBeenCalledWith({
-      id: 'any_id',
-      name: 'any_fb_name',
-      email: 'any_email',
-      facebookId: 'any_id',
+      any: 'any',
     });
 
     expect(userAccountRepository.saveWithFacebook).toHaveBeenCalledTimes(1);
