@@ -8,27 +8,25 @@ import {
 
 export class FacebookAuthenticationService {
   constructor(
-    private readonly loadFacebookUserApi: LoadFacebookUserApi,
-    private readonly loadUserAccountRepository: LoadUserAccountRepository,
-    private readonly createFacebookUserAccountRepository: CreateFacebookUserAccountRepository,
+    private readonly facebookApi: LoadFacebookUserApi,
+    private readonly userAccountRepository: LoadUserAccountRepository &
+      CreateFacebookUserAccountRepository,
   ) {}
 
   async perform(
     params: FacebookAuthentication.Params,
   ): Promise<FacebookAuthentication.Result> {
-    const facebookData = await this.loadFacebookUserApi.loadUser({
+    const facebookData = await this.facebookApi.loadUser({
       token: params.token,
     });
 
     if (facebookData !== undefined) {
-      const userAccountData = await this.loadUserAccountRepository.load({
+      const userAccountData = await this.userAccountRepository.load({
         email: facebookData.email,
       });
 
       if (userAccountData === undefined) {
-        await this.createFacebookUserAccountRepository.createFromFacebook(
-          facebookData,
-        );
+        await this.userAccountRepository.createFromFacebook(facebookData);
       }
     }
 
