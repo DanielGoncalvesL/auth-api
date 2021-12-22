@@ -7,6 +7,7 @@ import {
 } from '@/data/contracts/repositories';
 import { FacebookAccount } from '@/domain/models';
 import { TokenGenerator } from '../contracts/crypto/token';
+import { AccessToken } from '../../domain/models/access-token';
 
 export class FacebookAuthenticationService {
   constructor(
@@ -34,7 +35,10 @@ export class FacebookAuthenticationService {
         fbAccount,
       );
 
-      await this.crypto.generateToken({ key: id });
+      await this.crypto.generateToken({
+        key: id,
+        expirationInMs: AccessToken.expirationInMs,
+      });
     }
     return new AuthenticationError();
   }

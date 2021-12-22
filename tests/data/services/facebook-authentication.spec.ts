@@ -9,6 +9,7 @@ import {
 import { mocked } from 'ts-jest/utils';
 import { FacebookAccount } from '../../../src/domain/models/facebook-account';
 import { TokenGenerator } from '@/data/contracts/crypto';
+import { AccessToken } from '../../../src/domain/models/access-token';
 
 jest.mock('@/domain/models/facebook-account');
 
@@ -100,6 +101,7 @@ describe('FacebookAuthenticationService', () => {
 
     expect(crypto.generateToken).toHaveBeenCalledWith({
       key: 'any_account_id',
+      expirationInMs: AccessToken.expirationInMs,
     });
     expect(crypto.generateToken).toHaveBeenCalledTimes(1);
   });
